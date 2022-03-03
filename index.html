@@ -1,0 +1,917 @@
+
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">
+    body {
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-weight:300;
+        font-size:16px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 1100px;
+    }
+
+    h1 {
+        font-weight:300;
+    }
+
+    .disclaimerbox {
+        background-color: #eee;
+        border: 1px solid #eeeeee;
+        border-radius: 10px ;
+        -moz-border-radius: 10px ;
+        -webkit-border-radius: 10px ;
+        padding: 20px;
+    }
+
+    video.header-vid {
+        height: 140px;
+        border: 1px solid black;
+        border-radius: 10px ;
+        -moz-border-radius: 10px ;
+        -webkit-border-radius: 10px ;
+    }
+
+    img.header-img {
+        height: 140px;
+        border: 1px solid black;
+        border-radius: 10px ;
+        -moz-border-radius: 10px ;
+        -webkit-border-radius: 10px ;
+    }
+
+    img.rounded {
+        border: 1px solid #eeeeee;
+        border-radius: 10px ;
+        -moz-border-radius: 10px ;
+        -webkit-border-radius: 10px ;
+    }
+    img.cropped {
+        margin: 0px -20px 0px -40px;
+    }
+    img.cropped_t2s {
+        margin: 0px -10px 0px -33px;
+    }
+    img.cropped_large {
+        margin: 0px -10px 0px -33px;
+    }
+
+    /*img.cropped {
+        margin: -10px -20px 0px -30px;
+    */}
+
+    a:link,a:visited
+    {
+        color: #1367a7;
+        text-decoration: none;
+    }
+    a:hover {
+        color: #208799;
+    }
+
+    td.dl-link {
+        height: 160px;
+        text-align: center;
+        font-size: 22px;
+    }
+
+    .layered-paper-big { /* modified from: http://css-tricks.com/snippets/css/layered-paper/ */
+        box-shadow:
+                0px 0px 1px 1px rgba(0,0,0,0.35), /* The top layer shadow */
+                5px 5px 0 0px #fff, /* The second layer */
+                5px 5px 1px 1px rgba(0,0,0,0.35), /* The second layer shadow */
+                10px 10px 0 0px #fff, /* The third layer */
+                10px 10px 1px 1px rgba(0,0,0,0.35), /* The third layer shadow */
+                15px 15px 0 0px #fff, /* The fourth layer */
+                15px 15px 1px 1px rgba(0,0,0,0.35), /* The fourth layer shadow */
+                20px 20px 0 0px #fff, /* The fifth layer */
+                20px 20px 1px 1px rgba(0,0,0,0.35), /* The fifth layer shadow */
+                25px 25px 0 0px #fff, /* The fifth layer */
+                25px 25px 1px 1px rgba(0,0,0,0.35); /* The fifth layer shadow */
+        margin-left: 10px;
+        margin-right: 45px;
+    }
+
+
+    .layered-paper { /* modified from: http://css-tricks.com/snippets/css/layered-paper/ */
+        box-shadow:
+                0px 0px 1px 1px rgba(0,0,0,0.35), /* The top layer shadow */
+                5px 5px 0 0px #fff, /* The second layer */
+                5px 5px 1px 1px rgba(0,0,0,0.35), /* The second layer shadow */
+                10px 10px 0 0px #fff, /* The third layer */
+                10px 10px 1px 1px rgba(0,0,0,0.35); /* The third layer shadow */
+        margin-top: 5px;
+        margin-left: 10px;
+        margin-right: 30px;
+        margin-bottom: 5px;
+    }
+
+    .vert-cent {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .column {
+      float: left;
+      padding: 5px;
+    }
+    
+   .center {
+    padding-top: 100px;
+    margin: auto;
+     width: 50%;
+    } 
+
+    /* Clearfix (clear floats) */
+    .row::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    .hor-shift-vid {
+      position: relative;
+      /*top: 50%;*/
+      /*transform: translateX(-20%);*/
+      transform: translateX(-5%);
+  }
+
+    .hor-shift-left {
+        position: relative;
+        /*top: 50%;*/
+        /*transform: translateX(-20%);*/
+        transform: translateX(-20%);
+    }
+    .hor-shift-mid {
+        position: relative;
+        /*top: 50%;*/
+        transform: translateX(-40%);
+    }
+
+    .hor-shift-right {
+        position: relative;
+        /*top: 50%;*/
+        transform: translateX(-60%);
+    }
+    
+    .hor-shift-right-t2s {
+        position: relative;
+        /*top: 50%;*/
+        transform: translateX(-60%) scale(0.9);
+    }
+    hr
+    {
+        border: 0;
+        height: 1.5px;
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+    }
+</style>
+
+
+  
+  <title>Generative Transformers</title>
+
+    <meta property="og:title" content="Non-sequential Autoregressive Shape Priors for 3D Completion, Reconstruction and Generation">    
+    <meta property="og:description" content=" Generative Transformers ">
+
+  </head>
+
+  <body>
+    <br>
+    <center>
+    <span style="font-size:42px">Non-sequential Autoregressive Shape Priors for <br> 3D Completion, Reconstruction and Generation</span>
+    </center>
+
+    <br><br>
+
+    <table align="center" width="900px">
+      <tbody><tr>
+
+        <td align="center" width="100px">
+          <center>
+          <span style="font-size:20px"><a href="https://paritoshmittal12.github.io/">Paritosh Mittal</a><sup>* 1</sup></span>
+          </center>
+        </td>
+
+       <td align="center" width="100px">
+        <center>
+        <span style="font-size:20px"><a href="https://yccyenchicheng.github.io/">Yen-Chi Cheng</a><sup>* 1</sup></span>
+        </center>
+       </td>
+  
+       <td align="center" width="100px">
+        <center>
+        <span style="font-size:20px"><a href="http://www.researchgate.net/profile/Maneesh_Singh5">Maneesh Singh</a><sup>2</sup></span>
+        </center>
+       </td>
+
+       <td align="center" width="100px">
+        <center>
+        <span style="font-size:20px"><a href="https://shubhtuls.github.io/">Shubham Tulsiani</a><sup>1</sup></span>
+        </center>
+       </td>
+       
+      </tr></tbody>
+    </table>
+
+    <br>
+
+   <table align="center" width="800px">
+      <tbody>
+        <tr>
+          
+          <td align="center" width="200px">
+          <center>
+            <span style="font-size:20px"><sup>1</sup>Carnegie Mellon University</span>
+          </center>
+          </td>
+          
+          <td align="center" width="200px">
+          <center>
+            <span style="font-size:20px"><sup>2</sup>Verisk Analytics</span>
+          </center>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+    
+    <table align="center" width="800px">
+      <tbody>
+        <tr>
+          
+          <td align="center" width="200px">
+          <center>
+            <span style="font-size:20px">(* indicates equal contribution)</span>
+          </center>
+          </td>
+          
+        </tr>
+      </tbody>
+    </table>
+
+
+  <br><br>
+
+  <!-- <table align="center" width="900px"> -->
+  <table align="center" width="1200px">
+    <tbody><tr>
+    
+    <!-- <td align="center">
+        <img src="./figs/generative3d_teaser.png" width="800px">
+    </td> -->
+    <td align="center">
+      <div style="display:inline-block;" class="hor-shift-vid">
+        <!-- <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-0-gtmix.png"> -->
+        <video  autoplay loop muted playsinline width="100%">
+          <source src="./gen3d_teaser_crop.mp4" type="video/mp4">
+        </video>
+        <br><br>
+        <i>
+          <b>Overview.</b> Our approach combines a non-sequential autoregressive prior for 3D shapes with task-specific conditionals <br>
+          to generate multiple plausible and high-quality shapes consistent with input conditioning. 
+          We show the efficacy of our approach across diverse tasks such as <br>
+          (Left) <b>shape completion</b>, (Middle) <b>single-view reconstruction</b> and (Right) <b>language-guided generation</b>. 
+        </i>
+      </div>
+    </td>
+    </tr></tbody>
+  </table>
+
+  <br><hr><br>
+
+  <table align="center" width="1800px">
+    <tbody>
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/02691156-1c2e9dedbcf511e616a077c4c0fc1181-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/02691156-1c2e9dedbcf511e616a077c4c0fc1181-6-gen-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/02691156-1c2e9dedbcf511e616a077c4c0fc1181-6-gen-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/02691156-1c2e9dedbcf511e616a077c4c0fc1181-6-gen-3.gif">
+
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/02828884-b4ae95fbb879bed0ee38cd6552dcaadc-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/02828884-b4ae95fbb879bed0ee38cd6552dcaadc-6-gen-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/02828884-b4ae95fbb879bed0ee38cd6552dcaadc-6-gen-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/02828884-b4ae95fbb879bed0ee38cd6552dcaadc-6-gen-2.gif">
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/03636649-d90639e69c82f864eb2d9895648d1206-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/03636649-d90639e69c82f864eb2d9895648d1206-6-gen-2.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/03636649-d90639e69c82f864eb2d9895648d1206-6-gen-3.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/03636649-d90639e69c82f864eb2d9895648d1206-6-gen-4.gif">
+
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/04379243-9c2fb771ec6073b37ff6ace05b36a5-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/04379243-9c2fb771ec6073b37ff6ace05b36a5-6-gen-2.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/04379243-9c2fb771ec6073b37ff6ace05b36a5-6-gen-3.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/half/04379243-9c2fb771ec6073b37ff6ace05b36a5-6-gen-4.gif">
+        </td>
+      </tr>
+      
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/02691156-3e0561d70c7fd4f51c6e4e20f2b76086-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/02691156-3e0561d70c7fd4f51c6e4e20f2b76086-6-gen-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/02691156-3e0561d70c7fd4f51c6e4e20f2b76086-6-gen-3.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/02691156-3e0561d70c7fd4f51c6e4e20f2b76086-6-gen-4.gif">
+
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/03001627-3e8ad99691e8ea4c504721639e19f609-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/03001627-3e8ad99691e8ea4c504721639e19f609-6-gen-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/03001627-3e8ad99691e8ea4c504721639e19f609-6-gen-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/03001627-3e8ad99691e8ea4c504721639e19f609-6-gen-2.gif">
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/04090263-25cf1e85d9875c9412173f61ff9d1fe5-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/04090263-25cf1e85d9875c9412173f61ff9d1fe5-6-gen-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/04090263-25cf1e85d9875c9412173f61ff9d1fe5-6-gen-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/04090263-25cf1e85d9875c9412173f61ff9d1fe5-6-gen-2.gif">
+
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/04256520-82d25519070e3d5d6f1ad7def14e2855-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/04256520-82d25519070e3d5d6f1ad7def14e2855-6-gen-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/04256520-82d25519070e3d5d6f1ad7def14e2855-6-gen-3.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/back/04256520-82d25519070e3d5d6f1ad7def14e2855-6-gen-4.gif">
+
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/02828884-866b0fab7a3e54053555de1e3169ac6e-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/02828884-866b0fab7a3e54053555de1e3169ac6e-6-gen-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/02828884-866b0fab7a3e54053555de1e3169ac6e-6-gen-2.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/02828884-866b0fab7a3e54053555de1e3169ac6e-6-gen-4.gif">
+
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/02958343-12410830e8a5067c69576518bd9bfe48-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/02958343-12410830e8a5067c69576518bd9bfe48-6-gen-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/02958343-12410830e8a5067c69576518bd9bfe48-6-gen-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/02958343-12410830e8a5067c69576518bd9bfe48-6-gen-4.gif">
+        </td>
+      </tr>
+<!-- 
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/03001627-9b902b5c6570acb314b96b665a8ac321-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/03001627-9b902b5c6570acb314b96b665a8ac321-6-gen-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/03001627-9b902b5c6570acb314b96b665a8ac321-6-gen-2.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/03001627-9b902b5c6570acb314b96b665a8ac321-6-gen-3.gif">
+
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/04530566-a7444ff7be7aad024c8ad92cfce1307c-5-comb.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/04530566-a7444ff7be7aad024c8ad92cfce1307c-6-gen-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/04530566-a7444ff7be7aad024c8ad92cfce1307c-6-gen-3.gif">
+          <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/04530566-a7444ff7be7aad024c8ad92cfce1307c-6-gen-4.gif">
+        </td>
+      </tr> -->
+
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/03001627-9b902b5c6570acb314b96b665a8ac321-5-comb.gif">
+            <p>Input</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/03001627-9b902b5c6570acb314b96b665a8ac321-6-gen-0.gif">
+            <p>&nbsp;</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/03001627-9b902b5c6570acb314b96b665a8ac321-6-gen-2.gif">
+            <p>Multimodal Shape Completion</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/03001627-9b902b5c6570acb314b96b665a8ac321-6-gen-3.gif">
+            <p>&nbsp;</p>
+          </div>
+
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/04530566-a7444ff7be7aad024c8ad92cfce1307c-5-comb.gif">
+            <p>Input</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/04530566-a7444ff7be7aad024c8ad92cfce1307c-6-gen-0.gif">
+            <p>&nbsp;</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/04530566-a7444ff7be7aad024c8ad92cfce1307c-6-gen-3.gif">
+            <p>Multimodal Shape Completion</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./shape_comp_ours/quadrant/04530566-a7444ff7be7aad024c8ad92cfce1307c-6-gen-4.gif">
+            <p>&nbsp;</p>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br>
+  <center>
+    <span style="font-size:14px;" width="1000px"><i><b>Shape Completion.</b></i> Given the partial inputs, the proposed approach is able to generate
+      diverse plausible 3D shapes consistent with the partial input. <br>
+      For example in row-5, a table like structure is reconstructed as an aeroplane. <span style="color: #a00000">Red cuboid</span>  denotes the missing region.</span>
+  </center>
+  <br><hr><br>
+
+  <table align="center" width="1600px">
+    <tbody>
+
+      <tr>
+        <td align="center"; width="1200x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_SNILLE_1-3274-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_SNILLE_1-3274-3-gt-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_SNILLE_1-3274-4-gen-rand_sdf_transformer-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_SNILLE_1-3274-4-gen-voxel_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_SNILLE_1-3274-4-gen-sdf_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_SNILLE_1-3274-4-gen-pix2vox-0.gif">
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1200x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_BORJE-1701-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_BORJE-1701-3-gt-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_BORJE-1701-4-gen-rand_sdf_transformer-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_BORJE-1701-4-gen-voxel_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_BORJE-1701-4-gen-sdf_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_BORJE-1701-4-gen-pix2vox-0.gif">
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1200x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_EKTORP_1-1802-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_EKTORP_1-1802-3-gt-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_EKTORP_1-1802-4-gen-rand_sdf_transformer-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_EKTORP_1-1802-4-gen-voxel_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_EKTORP_1-1802-4-gen-sdf_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/chair-IKEA_EKTORP_1-1802-4-gen-pix2vox-0.gif">
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1200x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_HEMNES_3-0457-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_HEMNES_3-0457-3-gt-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_HEMNES_3-0457-4-gen-rand_sdf_transformer-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_HEMNES_3-0457-4-gen-voxel_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_HEMNES_3-0457-4-gen-sdf_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_HEMNES_3-0457-4-gen-pix2vox-0.gif">
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1200x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/table-IKEA_INGATORP-0713-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/table-IKEA_INGATORP-0713-3-gt-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/table-IKEA_INGATORP-0713-4-gen-rand_sdf_transformer-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/table-IKEA_INGATORP-0713-4-gen-voxel_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/table-IKEA_INGATORP-0713-4-gen-sdf_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/table-IKEA_INGATORP-0713-4-gen-pix2vox-0.gif">
+        </td>
+      </tr>
+
+      <!-- <tr>
+        <td align="center"; width="1200x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-3-gt-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-4-gen-rand_sdf_transformer-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-4-gen-voxel_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-4-gen-sdf_resnet-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-4-gen-pix2vox-0.gif">
+        </td>
+      </tr> -->
+
+      <tr>
+        <td align="center"; width="1200x", class="hor-shift-left">
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-0-gtmix.png">
+            <p>Input Image</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-3-gt-x.gif">
+            <p>Ground Truth</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-4-gen-rand_sdf_transformer-0.gif">
+            <p>Ours</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-4-gen-voxel_resnet-0.gif">
+            <p>ResNet2Voxel</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-4-gen-sdf_resnet-0.gif">
+            <p>ResNet2SDF</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_comp/bed-IKEA_LILLESAND-0722-4-gen-pix2vox-0.gif">
+            <p>Pix2Vox</p>
+          </div>
+        </td>
+      </tr>
+    
+      <!-- <tr><td align="center" class="hor-shift-left"><b>thin legs, thin arms</b></td><td align="center" class="hor-shift-left"><b>Stool, has a square floor mount</b></td><td align="center" class="hor-shift-left"><b>No holes in arms?</b></td></tr> -->
+    
+    </tbody>
+  </table>
+  <br>
+  <center>
+    <span style="font-size:14px;" width="1000px"><i><b>Single-view Reconstruction.</b></i> Given an image as input, 
+      we show the single-view reconstruction results with the proposed method and how it compares against other competing methods.</span>
+  </center>
+  <br><hr><br>
+
+  <table align="center" width="1600px">
+    <tbody>
+      <tr>
+        <td align="center"; width="1400x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/chair-IKEA_FUSION-1876-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/chair-IKEA_FUSION-1876-3-gen-0-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/chair-IKEA_FUSION-1876-3-gen-0-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/chair-IKEA_FUSION-1876-3-gen-0-2.gif">
+
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/chair-IKEA_BORJE-1734-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/chair-IKEA_BORJE-1734-3-gen-0-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/chair-IKEA_BORJE-1734-3-gen-0-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/chair-IKEA_BORJE-1734-3-gen-0-2.gif">
+        </td>
+      </tr>
+
+      <!-- <tr>
+        <td align="center"; width="1400x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-3-gen-0-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-3-gen-0-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-3-gen-0-2.gif">
+
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-3-gen-0-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-3-gen-0-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-3-gen-0-2.gif">
+        </td>
+      </tr> -->
+
+      <tr>
+        <td align="center"; width="1400x", class="hor-shift-left">
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-0-gtmix.png">
+            <p>Input Image</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-3-gen-0-0.gif">
+            <p>&nbsp;</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-3-gen-0-1.gif">
+            <p>Multimodal Shape Completion</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-3-gen-0-2.gif">
+            <p>&nbsp;</p>
+          </div>
+
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-0-gtmix.png">
+            <p>Input Image</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-3-gen-0-0.gif">
+            <p>&nbsp;</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-3-gen-0-1.gif">
+            <p>Multimodal Shape Completion</p>
+          </div>
+          <div style="display:inline-block;" class="img-with-text">
+            <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-3-gen-0-2.gif">
+            <p>&nbsp;</p>
+          </div>
+
+          <!-- <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-3-gen-0-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-3-gen-0-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/sofa-IKEA_SOLSTA_d053e745b565fa391c1b3b2ed8d13bf8-1627-3-gen-0-2.gif"> -->
+
+          <!-- <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-0-gtmix.png">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-3-gen-0-0.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-3-gen-0-1.gif">
+          <img style="max-width: 180px; height: auto;" src="./img2shape_ours/bookcase-IKEA_LACK_1-0236-3-gen-0-2.gif"> -->
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <br>
+  <center>
+    <span style="font-size:14px;" width="1000px"><i><b>Single-view Reconstruction.</b></i> We present more results from the proposed method.</span>
+  </center>
+  <br><hr><br>
+
+  <table align="center" width="1500px">
+      <tbody><tr>
+    <td align="center"; width="400px", class="hor-shift-left">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/thin legs, thin arms/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/thin legs, thin arms/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/thin legs, thin arms/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-mid">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/Stool, has a square floor mount/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/Stool, has a square floor mount/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/Stool, has a square floor mount/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-right">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/No holes in arms/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/No holes in arms/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/No holes in arms/3.gif">
+    </td>
+    </tr>
+    <tr><td align="center" class="hor-shift-left"><b>thin legs, thin arms</b></td><td align="center" class="hor-shift-mid"><b>Stool, has a square floor mount</b></td><td align="center" class="hor-shift-right"><b>No holes in arms?</b></td></tr>
+    
+    <td align="center", width="400px", class="hor-shift-left">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/no arm rest/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/no arm rest/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/no arm rest/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-mid">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/kitchen chair/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/kitchen chair/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/kitchen chair/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-right">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/tall thinest legs/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/tall thinest legs/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/tall thinest legs/3.gif">
+    </td>
+    
+    </tr>
+    <tr><td align="center" class="hor-shift-left"><b>no arm rest</b></td><td align="center" class="hor-shift-mid"><b>kitchen chair</b></td><td align="center" class="hor-shift-right"><b>tall thinest legs</b></td></tr>
+
+    <td align="center", width="400px", class="hor-shift-left">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/cup shaped/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/cup shaped/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/cup shaped/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-mid">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/lawn chair, two slats/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/lawn chair, two slats/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/lawn chair, two slats/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-right">
+      <img width=180px; class="cropped"; src="./lang_cond/more results/Most ornate, rounded back with design/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/Most ornate, rounded back with design/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond//more results/Most ornate, rounded back with design/3.gif">
+    </td>
+    
+    </tr>
+    <tr><td align="center" class="hor-shift-left"><b>cup shaped</b></td><td align="center" class="hor-shift-mid"><b>lawn chair, two slats</b></td><td align="center" class="hor-shift-right"><b>Most ornate, rounded back with design</b></td></tr>
+    
+    </tbody>
+  </table>
+
+  <br>
+  <center>
+      <span style="font-size:14px;" width="1000px"><i><b>Language-guided Generation.</b> Bold: Text Description. GIF: Three random samples generated by our approach.</i></span>
+  </center>
+
+
+<br><hr><br>
+    <table align="center" width="1500px">
+      <tbody><tr>
+
+    <td align="center"; width="400px", class="hor-shift-left">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/curved looking one with four legs/ours/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/curved looking one with four legs/ours/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/curved looking one with four legs/ours/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-mid">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/curved looking one with four legs/je/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/curved looking one with four legs/je/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/curved looking one with four legs/je/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-right-t2s">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/curved looking one with four legs/t2s/1.gif">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/curved looking one with four legs/t2s/2.gif">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/curved looking one with four legs/t2s/3.gif">
+    </td>
+    </tr>
+    <tr><td align="center" class="hor-shift-left"><i>Ours</i></td><td align="center" class="hor-shift-mid"><i>JE</i></td><td align="center" class="hor-shift-right"><i>T2S</i></td></tr>
+    <tr><td align="center" class="hor-shift-left"></td><td align="center" class="hor-shift-mid"><b>curved looking one with four legs</b></td><td align="center" class="hor-shift-right"></td></tr>
+
+    <td align="center"; width="400px", class="hor-shift-left">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/tall narrow back/ours/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/tall narrow back/ours/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/tall narrow back/ours/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-mid">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/tall narrow back/je/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/tall narrow back/je/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/tall narrow back/je/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-right-t2s">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/tall narrow back/t2s/1.gif">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/tall narrow back/t2s/2.gif">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/tall narrow back/t2s/3.gif">
+    </td>
+    </tr>
+    <tr><td align="center" class="hor-shift-left"><i>Ours</i></td><td align="center" class="hor-shift-mid"><i>JE</i></td><td align="center" class="hor-shift-right"><i>T2S</i></td></tr>
+    <tr><td align="center" class="hor-shift-left"></td><td align="center" class="hor-shift-mid"><b>tall narrow back</b></td><td align="center" class="hor-shift-right"></td></tr>
+
+    <td align="center"; width="400px", class="hor-shift-left">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Single leg on square base/ours/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Single leg on square base/ours/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Single leg on square base/ours/3.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-mid">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Single leg on square base/je/2.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Single leg on square base/je/3.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Single leg on square base/je/1.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-right-t2s">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/Single leg on square base/t2s/1.gif">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/Single leg on square base/t2s/2.gif">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/Single leg on square base/t2s/3.gif">
+    </td>
+    </tr>
+    <tr><td align="center" class="hor-shift-left"><i>Ours</i></td><td align="center" class="hor-shift-mid"><i>JE</i></td><td align="center" class="hor-shift-right"><i>T2S</i></td></tr>
+    <tr><td align="center" class="hor-shift-left"></td><td align="center" class="hor-shift-mid"><b>Single leg on square base</b></td><td align="center" class="hor-shift-right"></td></tr>
+
+    <td align="center"; width="400px", class="hor-shift-left">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Wide seat with armrest/ours/3.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Wide seat with armrest/ours/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Wide seat with armrest/ours/2.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-mid">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Wide seat with armrest/je/1.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Wide seat with armrest/je/3.gif">
+      <img width=180px; class="cropped"; src="./lang_cond/baselines/Wide seat with armrest/je/2.gif">
+    </td>
+    <td align="center", width="400px", class="hor-shift-right-t2s">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/Wide seat with armrest/t2s/1.gif">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/Wide seat with armrest/t2s/2.gif">
+      <img width=180px; class="cropped_t2s"; src="./lang_cond/baselines/Wide seat with armrest/t2s/3.gif">
+    </td>
+    </tr>
+    <tr><td align="center" class="hor-shift-left"><i>Ours</i></td><td align="center" class="hor-shift-mid"><i>JE</i></td><td align="center" class="hor-shift-right"><i>T2S</i></td></tr>
+    <tr><td align="center" class="hor-shift-left"></td><td align="center" class="hor-shift-mid"><b>Wide seat with armrest</b></td><td align="center" class="hor-shift-right"></td></tr>
+    
+    </tbody></table>
+  <center>
+       <span style="font-size:14px;" width="1000px"><i><b>Qualitative Comparison with Baselines</b> Bold: Text Description. GIF: Three random samples generated by our approach. Left to Right: Columns 1-3 are the generations from our approach. Columns 4-6 are generations from JE and columns 7-9 are from Text2Shape </i></span>
+    </center>
+
+<br><hr><br>
+
+<!-- <br><hr><br> -->
+  <table align="center" width="1800px">
+    <tbody>
+      <tr>
+        <td align="center"; width="1500x", class="hor-shift-left">
+        <!-- <td align="center"; width="1080px"> -->
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/02691156-1b90541c9d95d65d2b48e2e94b50fd01-2-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/02691156-1b90541c9d95d65d2b48e2e94b50fd01-3-recon.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/02828884-106494f75125eea6adf66a6d73888234-2-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/02828884-106494f75125eea6adf66a6d73888234-3-recon.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/02828884-52867aee1e2e137912a905e721b748f5-2-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/02828884-52867aee1e2e137912a905e721b748f5-3-recon.gif">
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1500x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/02933112-634fe05a380adac585430ccbd2632877-2-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/02933112-634fe05a380adac585430ccbd2632877-3-recon.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/03001627-1f8e18d42ddded6a4b3c42e318f3affc-2-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/03001627-1f8e18d42ddded6a4b3c42e318f3affc-3-recon.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/02933112-79a8b5fdd40e1b1d20768660cf080d12-2-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/02933112-79a8b5fdd40e1b1d20768660cf080d12-3-recon.gif">
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1500x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/03636649-26f0f37f0f2623c4a3fa46ae73c48b4-2-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/03636649-26f0f37f0f2623c4a3fa46ae73c48b4-3-recon.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/04256520-776e86412e7f3c6dffb78a7278f8e374-2-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/04256520-776e86412e7f3c6dffb78a7278f8e374-3-recon.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/03211117-73669f92851d3b28eb34db531a289b8e-2-x.gif">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/snet/03211117-73669f92851d3b28eb34db531a289b8e-3-recon.gif">
+        </td>
+      </tr>
+
+    <tr><td align="center" class="hor-shift-left"><b>ShapeNet</b></td></tr>
+      
+    <tr>
+      <td align="center"; width="1500x", class="hor-shift-left">
+        <div style="display:inline-block;" class="img-with-text">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/chair-IKEA_FUSION-1870-2-x.gif">
+          <p>Ground-truth</p>
+        </div>
+        <div style="display:inline-block;" class="img-with-text">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/chair-IKEA_FUSION-1870-3-recon.gif">
+          <p>Reconstruction</p>
+        </div>
+        <!-- <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/chair-IKEA_FUSION-1870-2-x.gif">
+        <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/chair-IKEA_FUSION-1870-3-recon.gif"> -->
+        <div style="display:inline-block;" class="img-with-text">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/bookcase-IKEA_LACK_2-0250-2-x.gif">
+          <p>Ground-truth</p>
+        </div>
+        <div style="display:inline-block;" class="img-with-text">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/bookcase-IKEA_LACK_2-0250-3-recon.gif">
+          <p>Reconstruction</p>
+        </div>
+        <!-- <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/bookcase-IKEA_LACK_2-0250-2-x.gif"> -->
+        <!-- <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/bookcase-IKEA_LACK_2-0250-3-recon.gif"> -->
+        
+        <!-- <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/sofa-IKEA_EKTORP_1-0128-3-recon.gif"> -->
+        <div style="display:inline-block;" class="img-with-text">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/sofa-IKEA_EKTORP_1-0128-2-x.gif">
+          <p>Ground-truth</p>
+        </div>
+        <div style="display:inline-block;" class="img-with-text">
+          <img style="max-width: 180px; height: auto;" src="./pvqvae/pix3d/sofa-IKEA_EKTORP_1-0128-3-recon.gif">
+          <p>Reconstruction</p>
+        </div>
+      </td>
+    </tr>
+
+    <tr><td align="center" class="hor-shift-left"><b>Pix3D</b></td></tr>
+    </tbody>
+  </table>
+
+  <br>
+  <center>
+    <span style="font-size:14px;" width="1000px"><i><b>P-VQ-VAE's Reconstruction.</b> Left: Ground-truth. Right: Reconstruction.</i></span>
+  </center>
+  <br><hr><br>
+
+  <table align="center" width="1800px">
+    <tbody>
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+        <!-- <td align="center"; width="1080px"> -->
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0001-0-tf.gif">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0003-0-tf.gif">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0004-0-tf.gif">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0059-0-tf.gif">
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0106-0-tf.gif">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0111-0-tf.gif">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0141-0-tf.gif">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0188-0-tf.gif">
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0202-0-tf.gif">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0236-0-tf.gif">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0312-0-tf.gif">
+          <img style="max-width: 180px; height: auto;" src="./tf_uncond/0319-0-tf.gif">
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <br>
+  <center>
+    <span style="font-size:14px;" width="1000px"><i><b>Autoregressive Generation with the Non-sequential Transformer.</b></i></span>
+  </center>
+  <br><hr><br>
+
+  <!-- <table align="center" width="1800px">
+    <tbody>
+      <tr>
+        <td align="center"; width="1600x", class="hor-shift-left">
+          <img style="max-width: 1024px; height: auto;" src="./shape_comp_baselines/shape_comp_baselines.png">
+        </td>
+      </tr>
+
+    </tbody>
+  </table> -->
+
+  <!-- <br> -->
+    <!-- <center>
+      <span style="font-size:14px;" width="1000px"><i><b>Shape Completion: More Comparisons with the Competing Methods.</b></i></span>
+    </center> -->
+  <!-- <br><hr><br> -->
+
+
+	<center>
+    <h1>Acknowledgements</h1>
+  </center>
+	  This webpage template was borrowed from <a href="https://richzhang.github.io/colorization/">here</a>.
+	<table align="center" width="900px">
+	  <tbody>
+      <tr>
+	    </tr>
+	  </tbody>
+  </table>
+
+</body></html>
