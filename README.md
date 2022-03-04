@@ -1,6 +1,6 @@
 # AutoSDF:
 [[`arXiv` (coming soon)]()]
-[[`Project Page`](https://jasonyzhang.com/ners/)]
+[[`Project Page`](https://yccyenchicheng.github.io/AutoSDF/)]
 [[`Bibtex`](#citation)]
 
 Code release for the CVPR 2022 paper "AutoSDF: Shape Priors for 3D Completion, Reconstruction and Generation".
