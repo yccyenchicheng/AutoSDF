@@ -1,12 +1,11 @@
-# AutoSDF:
+# AutoSDF: Shape Priors for 3D Completion, Reconstruction and Generation
 [[`arXiv`](https://arxiv.org/abs/2203.09516)]
 [[`Project Page`](https://yccyenchicheng.github.io/AutoSDF/)]
 [[`BibTex`](#citation)]
 
+Code release for the CVPR 2022 paper "AutoSDF: Shape Priors for 3D Completion, Reconstruction and Generation".
 
 https://user-images.githubusercontent.com/27779063/159215086-6889da7c-07c6-4909-b51f-bc04364072cf.mp4
-
-Code release for the CVPR 2022 paper "AutoSDF: Shape Priors for 3D Completion, Reconstruction and Generation".
 
 # Installation
 Please install [`pytorch`](https://pytorch.org/) and [`pytorch3d`](https://github.com/facebookresearch/pytorch3d). Or you can setup the environment using `conda`:
