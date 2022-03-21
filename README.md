@@ -3,8 +3,7 @@
 [[`Project Page`](https://yccyenchicheng.github.io/AutoSDF/)]
 [[`BibTex`](#citation)]
 
-
-https://user-images.githubusercontent.com/27779063/159215086-6889da7c-07c6-4909-b51f-bc04364072cf.mp4
+https://user-images.githubusercontent.com/27779063/159215512-88abab07-1150-4dee-84ba-2cfeef55c3f1.mp4
 
 Code release for the CVPR 2022 paper "AutoSDF: Shape Priors for 3D Completion, Reconstruction and Generation".
 
