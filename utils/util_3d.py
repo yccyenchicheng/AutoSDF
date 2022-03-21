@@ -1,0 +1,517 @@
+import h5py
+import trimesh
+import numpy as np
+import marching_cubes as mcubes
+import einops
+from einops import rearrange, repeat
+from skimage import measure
+from termcolor import cprint
+
+
+import open3d as o3d
+# from open3d.geometry.PointCloud import compute_point_cloud_distance
+
+import torch
+import torchvision.utils as vutils
+
+import pytorch3d
+from pytorch3d.structures import Pointclouds, Meshes
+
+from pytorch3d.renderer import (
+    look_at_view_transform,
+    FoVOrthographicCameras, 
+    PointsRasterizationSettings,
+    PointsRenderer,
+    PulsarPointsRenderer,
+    PointsRasterizer,
+    AlphaCompositor,
+    NormWeightedCompositor
+)
+
+from pytorch3d.renderer import (
+    look_at_view_transform,
+    FoVPerspectiveCameras, 
+    PointLights, 
+    DirectionalLights, 
+    Materials, 
+    RasterizationSettings, 
+    MeshRenderer, 
+    MeshRasterizer,  
+    SoftPhongShader,
+    HardPhongShader,
+    TexturesUV,
+    TexturesVertex
+)
+
+from pytorch3d.transforms import RotateAxisAngle
+from pytorch3d.structures import Meshes
+
+# macros
+from chamferdist import ChamferDistance
+
+chamferDist = ChamferDistance()
+
+def init_points_renderer(image_size=256, dist=1.7, elev=20, azim=20, camera='0', device='cuda:0'):
+    # renderer
+    # Initialize a camera.
+    # cameras = FoVOrthographicCameras(device=device, R=R, T=T, znear=0.01)
+
+    # R, T = look_at_view_transform(1.0, 15, 60) 
+    R, T = look_at_view_transform(dist, elev, azim) 
+
+    if camera == '0':
+        camera_cls = FoVPerspectiveCameras
+    else:
+        camera_cls = FoVOrthographicCameras
+
+    cameras = camera_cls(device=device, R=R, T=T)
+
+    # Define the settings for rasterization and shading. Here we set the output image to be of size
+    # 512x512. As we are rendering images for visualization purposes only we will set faces_per_pixel=1
+    # and blur_radius=0.0. Refer to raster_points.py for explanations of these parameters. 
+    raster_settings = PointsRasterizationSettings(
+        image_size=image_size, 
+        # radius = 0.0,
+        radius=0.003,
+        # points_per_pixel = 10
+        # bin_size=None,
+        points_per_pixel = 1
+    )
+
+
+    # Create a points renderer by compositing points using an alpha compositor (nearer points
+    # are weighted more heavily). See [1] for an explanation.
+    rasterizer = PointsRasterizer(cameras=cameras, raster_settings=raster_settings)
+    renderer = PointsRenderer(
+        rasterizer=rasterizer,
+        compositor=AlphaCompositor()
+    )
+
+    return renderer
+
+def init_mesh_renderer(image_size=512, dist=3.5, elev=90, azim=90, camera='0', device='cuda:0'):
+    # Initialize a camera.
+    # With world coordinates +Y up, +X left and +Z in, the front of the cow is facing the -Z direction. 
+    # So we move the camera by 180 in the azimuth direction so it is facing the front of the cow. 
+
+    if camera == '0':
+        # for vox orientation
+        # dist, elev, azim = 1.7, 20, 20 # shapenet
+        # dist, elev, azim = 3.5, 90, 90 # front view
+
+        # dist, elev, azim = 3.5, 0, 135 # front view
+        camera_cls = FoVPerspectiveCameras
+    else:
+        # dist, elev, azim = 5, 45, 135 # shapenet
+        camera_cls = FoVOrthographicCameras
+    
+    R, T = look_at_view_transform(dist, elev, azim)
+    cameras = camera_cls(device=device, R=R, T=T)
+
+    # Define the settings for rasterization and shading. Here we set the output image to be of size
+    # 512x512. As we are rendering images for visualization purposes only we will set faces_per_pixel=1
+    # and blur_radius=0.0. We also set bin_size and max_faces_per_bin to None which ensure that 
+    # the faster coarse-to-fine rasterization method is used. Refer to rasterize_meshes.py for 
+    # explanations of these parameters. Refer to docs/notes/renderer.md for an explanation of 
+    # the difference between naive and coarse-to-fine rasterization. 
+    raster_settings = RasterizationSettings(
+        image_size=image_size, 
+        blur_radius=0, 
+        faces_per_pixel=1, 
+    )
+
+    # Place a point light in front of the object. As mentioned above, the front of the cow is facing the 
+    # -z direction. 
+    lights = PointLights(device=device, location=[[1.0, 1.0, 0.0]])
+
+    # Create a Phong renderer by composing a rasterizer and a shader. The textured Phong shader will 
+    # interpolate the texture uv coordinates for each vertex, sample from a texture image and 
+    # apply the Phong lighting model
+    # renderer = MeshRenderer(
+    #     rasterizer=MeshRasterizer(
+    #         cameras=cameras, 
+    #         raster_settings=raster_settings
+    #     ),
+    #     shader=SoftPhongShader(
+    #         device=device, 
+    #         cameras=cameras,
+    #         lights=lights
+    #     )
+    # )
+    renderer = MeshRenderer(
+            rasterizer=MeshRasterizer(cameras=cameras, raster_settings=raster_settings),
+            shader=HardPhongShader(device=device, cameras=cameras)
+        )
+    return renderer
+
+
+def init_sdf_to_vox_params(vox_thres=0.033, sxyz=(2.545, 2.545, 2.545), txyz=(0.45, 0.45, 0.45), angles=(-90, 0, 90) ):
+    # init param for transformation
+    # tune
+    # vox_thres = 0.035
+    # sx = sy = sz = 2.55
+    # tx = ty = tz = 0.45
+
+    sx, sy, sz = sxyz
+    tx, ty, tz = txyz
+    anglex, angley, anglez = angles
+
+    vmin, vmax = -1., 1.
+    vrange = vmax - vmin
+    angle = torch.FloatTensor([[np.pi/180 * (anglex), np.pi/180 * (angley), -np.pi/180 * (anglez)]])
+
+    R = pytorch3d.transforms.euler_angles_to_matrix(angle, 'XYZ')
+    t = torch.FloatTensor([vrange * tx/64, vrange * ty/64, vrange * tz/64])[None, ..., None]
+    S = torch.FloatTensor([[ [vrange/sx, 0, 0, 0], [0, vrange/sy, 0, 0], [0, 0, vrange/sz, 0]]])
+    Rt = torch.cat([R, t], -1)
+
+    return Rt, S, vox_thres
+
+def init_snet_to_pix3dvox_params():
+    vox_thres = 0.033
+    sxyz = (2.545, 2.545, 2.545)
+    txyz = (0.45, 0.45, 0.45)
+    angles = (-90, 0, 90) 
+    return init_sdf_to_vox_params(vox_thres=vox_thres, sxyz=sxyz, txyz=txyz, angles=angles)
+
+def init_snet_sdf_to_snet_vox_params():
+    thx, thy, thz = 0, 0, 0
+
+    vox_thres = 0.027
+    sxyz = (2.54, 2.54, 2.54)
+    txyz = (0.47, 0.47, 0.49)
+    angles = (0, 0, 0) 
+    return init_sdf_to_vox_params(vox_thres=vox_thres, sxyz=sxyz, txyz=txyz, angles=angles)
+
+def init_snet_bin_sdf_to_snet_vox_params():
+    thx, thy, thz = 0, 0, 0
+    tx = ty = tz = 0.6
+    vox_thres = 0.069
+    sx = sy = sz = 2.545
+    thx, thy, thz = 0, 0, 0
+
+    # vox_thres = 0.027
+    sxyz = (sx, sy, sz)
+    txyz = (tx, ty, tz)
+    angles = (thx, thy, thz) 
+    return init_sdf_to_vox_params(vox_thres=vox_thres, sxyz=sxyz, txyz=txyz, angles=angles)
+
+
+def get_transform_grids(Rt, S, B, device=None):
+    Rt = repeat(Rt, 'b m n -> (repeat b) m n', repeat=B)
+    S = repeat(S, 'b m n -> (repeat b) m n', repeat=B)
+
+    gt_size = 32
+    sdf_size = 64
+
+    vmin, vmax = -1., 1.
+    vrange = vmax - vmin
+    x = torch.linspace(vmin, vmax, gt_size)
+    y = torch.linspace(vmin, vmax, gt_size)
+    z = torch.linspace(vmin, vmax, gt_size)
+    xx, yy, zz = torch.meshgrid(x, y, z)
+
+    grid_to_gt_res = torch.stack([xx, yy, zz], dim=-1).unsqueeze(0).to(device)
+    grid_to_gt_res = grid_to_gt_res.repeat(B, 1, 1, 1, 1)
+    grid_affine = torch.nn.functional.affine_grid(Rt, (B, 1, sdf_size, sdf_size, sdf_size)).to(device)
+    grid_scale = torch.nn.functional.affine_grid(S, (B, 1, sdf_size, sdf_size, sdf_size)).to(device)
+    return grid_to_gt_res, grid_affine, grid_scale
+
+def trans_sdf_to_vox(sdf, vox_thres=0.033, grid_to_gt_res=None, grid_affine=None, grid_scale=None, align_corners=True, pad_mode='border'):
+    mode = 'bilinear'
+    sdf_s = sdf.clone()
+    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_affine, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
+    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_scale, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
+    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_to_gt_res, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
+
+    voxel_sdf_mask = sdf_s.clone()
+    voxel_sdf_mask[sdf_s > vox_thres] = 0.
+    voxel_sdf_mask[sdf_s <= vox_thres] = 1.
+    return voxel_sdf_mask
+
+def trans_bin_sdf_to_vox(sdf, vox_thres=0.033, grid_to_gt_res=None, grid_affine=None, grid_scale=None, align_corners=True, pad_mode='border'):
+    mode = 'bilinear'
+    sdf_s = sdf.clone()
+    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_affine, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
+    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_scale, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
+    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_to_gt_res, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
+
+    voxel_sdf_mask = sdf_s.clone()
+    # thres = 0.031
+    # thres = 0.02
+    voxel_sdf_mask[sdf_s < vox_thres] = 0.
+    voxel_sdf_mask[sdf_s >= vox_thres] = 1.
+    return voxel_sdf_mask
+
+def read_sdf(sdf_h5_file):
+    h5_f = h5py.File(sdf_h5_file, 'r')
+    sdf = h5_f['pc_sdf_sample'][:].astype(np.float32)
+    sdf = torch.Tensor(sdf).view(1, 64, 64, 64)
+    sdf = sdf[None, ...]
+    return sdf
+
+def render_pcd(renderer, verts, color=[1, 1, 1], alpha=False):
+    if verts.dim() == 2:
+        verts = verts[None, ...]
+
+    verts = verts.to(renderer.rasterizer.cameras.device)
+    # verts = verts.cpu()
+
+    # verts: tensor of shape: B, V, 3
+    # return: image tensor with shape: B, C, H, W
+    V = verts.shape[1]
+    B = verts.shape[0]
+    features=torch.ones_like(verts)
+    for i in range(3):
+        features[:, :, i] = color[i]
+    pcl = Pointclouds(points=verts, features=features)
+    try:
+        images = renderer(pcl)
+    except:
+        images = renderer(pcl, gamma=(1e-4,),)
+        
+    return images.permute(0, 3, 1, 2)
+
+def render_mesh(renderer, mesh, color=None, norm=True):
+    # verts: tensor of shape: B, V, 3
+    # return: image tensor with shape: B, C, H, W
+    if mesh.textures is None:
+        verts = mesh.verts_list()
+        verts_rgb_list = []
+        for i in range(len(verts)):
+        # print(verts.min(), verts.max())
+            verts_rgb_i = torch.ones_like(verts[i])
+            if color is not None:
+                for i in range(3):
+                    verts_rgb_i[:, i] = color[i]
+            verts_rgb_list.append(verts_rgb_i)
+
+        texture = pytorch3d.renderer.Textures(verts_rgb=verts_rgb_list)
+        mesh.textures = texture
+
+    images = renderer(mesh)
+    return images.permute(0, 3, 1, 2)
+
+def render_voxel(mesh_renderer, voxel, render_all=False):
+
+    bs = voxel.shape[0]
+    if not render_all:
+        nimg_to_render = min(bs, 16)
+        # nimg_to_render = min(bs, 16) # no need to render that much..
+        voxel = voxel[:nimg_to_render]
+    else:
+        nimg_to_render = bs
+
+    # render voxel
+    meshes = pytorch3d.ops.cubify(voxel, thresh=0.5)
+    # verts = meshes.verts_list()[0][None, ...]
+    verts_list = meshes.verts_list()
+    norm_verts_list = []
+    verts_rgb_list = []
+    for verts in verts_list:
+    # print(f'verts: {verts.min()}, {verts.max()}, {verts.mean()}')
+        try:
+            verts = (verts - verts.min()) / (verts.max() - verts.min())
+        except:
+            # quick fix
+            images = torch.zeros(nimg_to_render, 4, 256, 256).to(voxel)
+            return images
+
+        verts = verts * 2 - 1
+        norm_verts_list.append(verts)
+        verts_rgb_list.append(torch.ones_like(verts))
+
+    meshes.textures = pytorch3d.renderer.Textures(verts_rgb=verts_rgb_list)
+    try:
+        images = mesh_renderer(meshes)
+        images = images.permute(0, 3, 1, 2)
+    except:
+        images = torch.zeros(nimg_to_render, 4, 256, 256).to(voxel)
+        print('here')
+
+    return images
+
+
+def sdf_to_mesh(sdf, level=0.02, color=None, render_all=False):
+    # device='cuda'
+    device=sdf.device
+
+    # extract meshes from sdf
+    n_cell = sdf.shape[-1]
+    bs, nc = sdf.shape[:2]
+
+    assert nc == 1
+
+    nimg_to_render = bs
+    if not render_all:
+        if bs > 16:
+            cprint('Warning! Will not return all meshes', 'red')
+        nimg_to_render = min(bs, 16) # no need to render that much..
+
+    verts = []
+    faces = []
+    verts_rgb = []
+
+    for i in range(nimg_to_render):
+        sdf_i = sdf[i, 0].detach().cpu().numpy()
+        # verts_i, faces_i = mcubes.marching_cubes(sdf_i, 0.02)
+        verts_i, faces_i = mcubes.marching_cubes(sdf_i, level)
+        verts_i = verts_i / n_cell - .5 
+
+        verts_i = torch.from_numpy(verts_i).float().to(device)
+        faces_i = torch.from_numpy(faces_i.astype(np.int64)).to(device)
+        text_i = torch.ones_like(verts_i).to(device)
+        if color is not None:
+            for i in range(3):
+                text_i[:, i] = color[i]
+
+        verts.append(verts_i)
+        faces.append(faces_i)
+        verts_rgb.append(text_i)
+
+    try:
+        p3d_mesh = pytorch3d.structures.Meshes(verts, faces, textures=pytorch3d.renderer.Textures(verts_rgb=verts_rgb))
+    except:
+        p3d_mesh = None
+
+    return p3d_mesh
+
+# rendering
+def add_mesh_textures(mesh):
+    verts = mesh.verts_list()
+    faces = mesh.faces_list()
+    
+    bs = len(verts)
+    verts_rgb = []
+    for i in range(bs):
+        verts_rgb.append(torch.ones_like(verts[i]))
+    
+    # mesh = Meshes(verts=verts, faces=faces, textures=pytorch3d.renderer.mesh.TexturesVertex(verts_features=verts_rgb))
+    mesh.textures = pytorch3d.renderer.mesh.TexturesVertex(verts_rgb)
+    return mesh
+
+def render_sdf(mesh_renderer, sdf, level=0.02, color=None, render_imsize=256, render_all=False):
+    """ 
+        shape of sdf:
+        - bs, 1, nC, nC, nC 
+
+        return a tensor of image rendered according to self.renderer
+        shape of image:
+        - bs, rendered_imsize, rendered_imsize, 4
+
+        ref: https://github.com/shubhtuls/PixelTransformer/blob/03b65b8612fe583b3e35fc82b446b5503dd7b6bd/data/base_3d.py
+    """
+    # device='cuda'
+    device = sdf.device
+    bs = sdf.shape[0]
+
+    if not render_all:
+        nimg_to_render = min(bs, 16) # no need to render that much..
+    
+    p3d_mesh = sdf_to_mesh(sdf, level=level, color=color, render_all=render_all)
+
+    if p3d_mesh is not None:
+        rendered_im = einops.rearrange(mesh_renderer(p3d_mesh), 'b h w c-> b c h w').contiguous() # bs, h, w, c
+    else:
+        rendered_im = torch.zeros(nimg_to_render, 4, render_imsize, render_imsize).to(device)
+
+    return rendered_im
+
+
+def rotate_mesh(mesh, axis='Y', angle=10, device='cuda'):
+    rot_func = RotateAxisAngle(angle, axis, device=device)
+
+    verts = mesh.verts_list()
+    faces = mesh.faces_list()
+    textures = mesh.textures
+    
+    B = len(verts)
+
+    rot_verts = []
+    for i in range(B):
+        v = rot_func.transform_points(verts[i])
+        rot_verts.append(v)
+    new_mesh = Meshes(verts=rot_verts, faces=faces, textures=textures)
+    return new_mesh
+
+def rotate_mesh_360(mesh_renderer, mesh):
+    cur_mesh = mesh
+
+    B = len(mesh.verts_list())
+    ret = [ [] for i in range(B)]
+
+    for i in range(36):
+        cur_mesh = rotate_mesh(cur_mesh)
+        img = render_mesh(mesh_renderer, cur_mesh, norm=False) # b c h w # important!! no norm here or they will not align
+        img = img.permute(0, 2, 3, 1) # b h w c
+        img = img.detach().cpu().numpy()
+        img = (img * 255).astype(np.uint8)
+        for j in range(B):
+            ret[j].append(img[j])
+
+    return ret
+
+############################# preprocess #############################
+
+def load_mesh(obj_f):
+    verts, faces_tup, _ = pytorch3d.io.load_obj(obj_f, load_textures=False)
+    faces = faces_tup.verts_idx
+
+    verts = verts.unsqueeze(0)
+    faces = faces.unsqueeze(0)
+
+    verts_rgb = torch.ones_like(verts)
+    mesh = pytorch3d.structures.Meshes(verts=verts, faces=faces, textures=pytorch3d.renderer.TexturesVertex(verts_rgb))
+
+    return mesh
+
+def as_mesh(scene_or_mesh):
+    """
+    Convert a possible scene to a mesh.
+    If conversion occurs, the returned mesh has only vertex and face data.
+    """
+    if isinstance(scene_or_mesh, trimesh.Scene):
+        if len(scene_or_mesh.geometry) == 0:
+            mesh = None  # empty scene
+        else:
+            # we lose texture information here
+            mesh = trimesh.util.concatenate(
+                tuple(trimesh.Trimesh(vertices=g.vertices, faces=g.faces)
+                    for g in scene_or_mesh.geometry.values()))
+    else:
+        assert(isinstance(scene_or_mesh, trimesh.Trimesh))
+        mesh = trimesh.Trimesh(vertices=scene_or_mesh.vertices, faces=scene_or_mesh.faces)
+    return mesh
+
+def get_normalize_mesh(model_file):
+    total = 16384
+    # print("[*] trimesh_load:", model_file)
+    mesh_list = trimesh.load_mesh(model_file, process=False)
+
+    mesh = as_mesh(mesh_list) # from s2s
+    if not isinstance(mesh, list):
+        mesh_list = [mesh]
+
+    area_sum = 0
+    area_lst = []
+    for idx, mesh in enumerate(mesh_list):
+        area = np.sum(mesh.area_faces)
+        area_lst.append(area)
+        area_sum+=area
+    area_lst = np.asarray(area_lst)
+    amount_lst = (area_lst * total / area_sum).astype(np.int32)
+    points_all=np.zeros((0,3), dtype=np.float32)
+    for i in range(amount_lst.shape[0]):
+        mesh = mesh_list[i]
+        # print("start sample surface of ", mesh.faces.shape[0])
+        points, index = trimesh.sample.sample_surface(mesh, amount_lst[i])
+        # print("end sample surface")
+        points_all = np.concatenate([points_all,points], axis=0)
+    centroid = np.mean(points_all, axis=0)
+    points_all = points_all - centroid
+    m = np.max(np.sqrt(np.sum(points_all ** 2, axis=1)))
+    # obj_file = os.path.join(norm_mesh_sub_dir, "pc_norm.obj")
+    ori_mesh_list = trimesh.load_mesh(model_file, process=False)
+    ori_mesh = as_mesh(ori_mesh_list)
+    ori_mesh.vertices = (ori_mesh.vertices - centroid) / float(m)
+    return ori_mesh, centroid, m

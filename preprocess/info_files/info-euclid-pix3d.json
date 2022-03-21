@@ -1,0 +1,49 @@
+{
+    "lst_dir": "/data/yenchi/CapstoneF21/data/pix3d/filelists",
+    "cats": {
+        "bed": 0,
+        "bookcase": 1,
+        "chair": 2,
+        "desk": 3,
+        "misc": 4,
+        "sofa": 5,
+        "table": 6,
+        "tool": 7,
+        "wardrobe": 8
+    },
+    "all_cats": [
+        "bed",
+        "bookcase",
+        "chair",
+        "desk",
+        "misc",
+        "sofa",
+        "table",
+        "tool",
+        "wardrobe"
+    ],
+    "raw_dirs_v1": {
+        "mesh_dir": "/data/yenchi/CapstoneF21/data/pix3d/model_align",
+        "norm_mesh_dir": "/data/yenchi/CapstoneF21/data/pix3d/norm_mesh_dir/",
+        "sdf_dir": "/data/yenchi/CapstoneF21/data/pix3d/SDF_v1_64/",
+        "rendered_dir": "/data/yenchi/CapstoneF21/data/ShapeNet/ShapeNetRendering/",
+        "renderedh5_dir": "/data/yenchi/CapstoneF21/data/ShapeNet/ShapeNetRenderingh5_v1/",
+        "renderedh5_dir_v2": "/data/yenchi/CapstoneF21/data/ShapeNet/ShapeNetRenderingh5_v2/",
+        "renderedh5_dir_est": "/data/yenchi/CapstoneF21/data/ShapeNet/ShapeNetRenderingh5_v1_pred_3d/",
+        "3dnnsdf_dir": "/data/yenchi/CapstoneF21/data/ShapeNet/SDF_full/"
+    },
+
+    
+    "old": {
+        "mesh_dir": "/ssd1/datasets/ShapeNet/ShapeNetCore.v1/",
+        "norm_mesh_dir": "/ssd1/datasets/ShapeNet/march_cube_objs_v1/",
+        "norm_mesh_dir_v2": "/ssd1/datasets/ShapeNet/march_cube_objs/",
+        "sdf_dir": "/ssd1/datasets/ShapeNet/SDF_v1/",
+        "sdf_dir_v2": "/ssd1/datasets/ShapeNet/SDF_v2/",
+        "rendered_dir": "/ssd1/datasets/ShapeNet/ShapeNetRendering/",
+        "renderedh5_dir": "/ssd1/datasets/ShapeNet/ShapeNetRenderingh5_v1/",
+        "renderedh5_dir_v2": "/ssd1/datasets/ShapeNet/ShapeNetRenderingh5_v2/",
+        "renderedh5_dir_est": "/ssd1/datasets/ShapeNet/ShapeNetRenderingh5_v1_pred_3d/",
+        "3dnnsdf_dir": "/ssd1/datasets/ShapeNet/SDF_full/"
+    }
+}

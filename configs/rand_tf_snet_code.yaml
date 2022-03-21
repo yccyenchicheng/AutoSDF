@@ -1,0 +1,19 @@
+model:
+  arch: tf_e
+  params:
+    embed_dim: 768
+    ntokens: 512
+    nhead: 12
+    nlayers_enc: 12
+    d_hid: 256
+    dropout: 0.1
+
+pe:
+  mode: 'fourier'
+  init_factor: 10
+  pos_dim: 3
+  zq_dim: 8
+  pos_embed_dim: 128
+
+data:
+  resolution: 64

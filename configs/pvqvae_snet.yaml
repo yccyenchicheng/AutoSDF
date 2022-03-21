@@ -1,0 +1,39 @@
+model:
+  arch_v: 'arch_v2'
+  params:
+    embed_dim: 256
+    n_embed: 512
+    ddconfig:
+      double_z: False
+      z_channels: 256
+      resolution: 64
+      in_channels: 1
+      out_ch: 1
+      ch: 64
+      # ch_mult: [1,1,2,2,4]  # num_down = len(ch_mult)-1
+      ch_mult: [1,2,2,4]  # num_down = len(ch_mult)-1
+      num_res_blocks: 1
+      attn_resolutions: [8]
+      dropout: 0.0
+
+lossconfig:
+  params:
+    disc_conditional: False
+    disc_in_channels: 1
+    disc_start: 250001
+    disc_weight: 0.8
+    codebook_weight: 1.0
+    perceptual_weight: 0.0
+
+data:
+  params:
+    batch_size: 12
+    num_workers: 24
+    train:
+      params:
+        config:
+          size: 256
+    validation:
+      params:
+        config:
+          size: 256
