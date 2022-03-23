@@ -15,6 +15,18 @@ conda env create -f autosdf.yaml
 conda activate autosdf
 ```
 
+However, the environments varies by each machine. We tested the code on `Ubuntu 20.04`, `cuda=11.3`, `python=3.8.11`, `pytorch=1.9.0`, `pytorch3d=0.5.0`.
+
+# Demo
+We provide a jupyter notebook for demo. First download the pretrained weights from [this link](https://drive.google.com/drive/folders/1n8W_8CfQ7uZDYNrv487sd0oyhRoNLfGo?usp=sharing), and put them under `saved_ckpt`. Then start the notebook server with
+```
+jupyter notebook
+```
+And run:
+- `demo_shape_comp.ipynb` for shape completion
+- `demo_single_view_recon.ipynb` for single-view reconstruction
+- `demo-lang-conditional.ipynb` for language-guided generation
+
 # Preparing the Data
 1. [ShapeNet](https://www.shapenet.org)
 
@@ -51,16 +63,6 @@ The Pix3D dataset can be downloaded here: https://github.com/xingyuansun/pix3d.
 ```
 ./launchers/train_resnet2vq_pix3d_img.sh
 ```
-
-# Demo
-We provide a jupyter notebook for demo. First download the pretrained weights from [this link](https://drive.google.com/drive/folders/1n8W_8CfQ7uZDYNrv487sd0oyhRoNLfGo?usp=sharing), and put them under `saved_ckpt`. Then start the notebook server with
-```
-jupyter notebook
-```
-And run:
-- `demo_shape_comp.ipynb` for shape completion
-- `demo_single_view_recon.ipynb` for single-view reconstruction
-- `demo-lang-conditional.ipynb` for language-guided generation
 
 # <a name="citation"></a>Citing AutoSDF
 
