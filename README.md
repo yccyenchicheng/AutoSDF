@@ -66,7 +66,7 @@ The Pix3D dataset can be downloaded here: https://github.com/xingyuansun/pix3d.
 
 # Issues and FAQ
 
-## 1. Installing `mcubes` from https://github.com/JustusThies/PyMarchingCubes
+## 1. Regarding `mcubes` functions
 We originally use the implementation of the marching cubes from this repo: https://github.com/JustusThies/PyMarchingCubes. However, some of the dependencies seems to be outdated and makes the installation troublesome. Currently the quick workaround is installing `mcubes` from https://github.com/pmneila/PyMCubes:
 ```
 pip install PyMCubes
