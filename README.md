@@ -64,6 +64,15 @@ The Pix3D dataset can be downloaded here: https://github.com/xingyuansun/pix3d.
 ./launchers/train_resnet2vq_pix3d_img.sh
 ```
 
+# Issues and FAQ
+
+## 1. Installing `mcubes` from https://github.com/JustusThies/PyMarchingCubes
+We originally use the implementation of the marching cubes from this repo: https://github.com/JustusThies/PyMarchingCubes. However, some of the dependencies seems to be outdated and makes the installation troublesome. Currently the quick workaround is installing `mcubes` from https://github.com/pmneila/PyMCubes:
+```
+pip install PyMCubes
+```
+and replace all the lines `import marching_cubes as mcubes` in our code with `import mcubes`. 
+
 # <a name="citation"></a>Citing AutoSDF
 
 If you find this code helpful, please consider citing:
