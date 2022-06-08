@@ -392,7 +392,7 @@ if __name__ == "__main__":
     mcube_cmd = './isosurface/computeMarchingCubes'
     lib_cmd = './isosurface/LIB_PATH'
 
-    num_sample = 65 ** 3
+    num_sample = 64 ** 3
     bandwidth = 0.1 # snet
     sdf_res = 256
     expand_rate = 1.3
