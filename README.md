@@ -30,9 +30,7 @@ And run:
 # Preparing the Data
 1. [ShapeNet](https://www.shapenet.org)
 
-First you need to download the `ShapeNetCore.v1` following the instruction of `https://www.shapenet.org/account/`. 
-
-To extract SDF values, we followed the [preprocessing steps from DISN](https://github.com/laughtervv/DISN).
+First you need to download the `ShapeNetCore.v1` following the instruction of `https://www.shapenet.org/account/`. Put them under `data/ShapeNet`. Then unzip the downloaded zip file. We assume the path to the unzipped folder is `data/ShapeNet/ShapeNetCore.v1`. To extract SDF values, we followed the [preprocessing steps from DISN](https://github.com/laughtervv/DISN/blob/master/preprocessing/create_point_sdf_grid.py).
 
 2. [Pix3D](https://github.com/xingyuansun/pix3d)
 

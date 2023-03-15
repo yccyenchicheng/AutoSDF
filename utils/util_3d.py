@@ -4,12 +4,8 @@ import numpy as np
 import marching_cubes as mcubes
 import einops
 from einops import rearrange, repeat
-from skimage import measure
 from termcolor import cprint
 
-
-import open3d as o3d
-# from open3d.geometry.PointCloud import compute_point_cloud_distance
 
 import torch
 import torchvision.utils as vutils
@@ -22,34 +18,22 @@ from pytorch3d.renderer import (
     FoVOrthographicCameras, 
     PointsRasterizationSettings,
     PointsRenderer,
-    PulsarPointsRenderer,
     PointsRasterizer,
     AlphaCompositor,
-    NormWeightedCompositor
 )
 
 from pytorch3d.renderer import (
     look_at_view_transform,
     FoVPerspectiveCameras, 
     PointLights, 
-    DirectionalLights, 
-    Materials, 
     RasterizationSettings, 
     MeshRenderer, 
     MeshRasterizer,  
-    SoftPhongShader,
     HardPhongShader,
-    TexturesUV,
-    TexturesVertex
 )
 
 from pytorch3d.transforms import RotateAxisAngle
 from pytorch3d.structures import Meshes
-
-# macros
-from chamferdist import ChamferDistance
-
-chamferDist = ChamferDistance()
 
 def init_points_renderer(image_size=256, dist=1.7, elev=20, azim=20, camera='0', device='cuda:0'):
     # renderer
@@ -143,105 +127,6 @@ def init_mesh_renderer(image_size=512, dist=3.5, elev=90, azim=90, camera='0', d
             shader=HardPhongShader(device=device, cameras=cameras)
         )
     return renderer
-
-
-def init_sdf_to_vox_params(vox_thres=0.033, sxyz=(2.545, 2.545, 2.545), txyz=(0.45, 0.45, 0.45), angles=(-90, 0, 90) ):
-    # init param for transformation
-    # tune
-    # vox_thres = 0.035
-    # sx = sy = sz = 2.55
-    # tx = ty = tz = 0.45
-
-    sx, sy, sz = sxyz
-    tx, ty, tz = txyz
-    anglex, angley, anglez = angles
-
-    vmin, vmax = -1., 1.
-    vrange = vmax - vmin
-    angle = torch.FloatTensor([[np.pi/180 * (anglex), np.pi/180 * (angley), -np.pi/180 * (anglez)]])
-
-    R = pytorch3d.transforms.euler_angles_to_matrix(angle, 'XYZ')
-    t = torch.FloatTensor([vrange * tx/64, vrange * ty/64, vrange * tz/64])[None, ..., None]
-    S = torch.FloatTensor([[ [vrange/sx, 0, 0, 0], [0, vrange/sy, 0, 0], [0, 0, vrange/sz, 0]]])
-    Rt = torch.cat([R, t], -1)
-
-    return Rt, S, vox_thres
-
-def init_snet_to_pix3dvox_params():
-    vox_thres = 0.033
-    sxyz = (2.545, 2.545, 2.545)
-    txyz = (0.45, 0.45, 0.45)
-    angles = (-90, 0, 90) 
-    return init_sdf_to_vox_params(vox_thres=vox_thres, sxyz=sxyz, txyz=txyz, angles=angles)
-
-def init_snet_sdf_to_snet_vox_params():
-    thx, thy, thz = 0, 0, 0
-
-    vox_thres = 0.027
-    sxyz = (2.54, 2.54, 2.54)
-    txyz = (0.47, 0.47, 0.49)
-    angles = (0, 0, 0) 
-    return init_sdf_to_vox_params(vox_thres=vox_thres, sxyz=sxyz, txyz=txyz, angles=angles)
-
-def init_snet_bin_sdf_to_snet_vox_params():
-    thx, thy, thz = 0, 0, 0
-    tx = ty = tz = 0.6
-    vox_thres = 0.069
-    sx = sy = sz = 2.545
-    thx, thy, thz = 0, 0, 0
-
-    # vox_thres = 0.027
-    sxyz = (sx, sy, sz)
-    txyz = (tx, ty, tz)
-    angles = (thx, thy, thz) 
-    return init_sdf_to_vox_params(vox_thres=vox_thres, sxyz=sxyz, txyz=txyz, angles=angles)
-
-
-def get_transform_grids(Rt, S, B, device=None):
-    Rt = repeat(Rt, 'b m n -> (repeat b) m n', repeat=B)
-    S = repeat(S, 'b m n -> (repeat b) m n', repeat=B)
-
-    gt_size = 32
-    sdf_size = 64
-
-    vmin, vmax = -1., 1.
-    vrange = vmax - vmin
-    x = torch.linspace(vmin, vmax, gt_size)
-    y = torch.linspace(vmin, vmax, gt_size)
-    z = torch.linspace(vmin, vmax, gt_size)
-    xx, yy, zz = torch.meshgrid(x, y, z)
-
-    grid_to_gt_res = torch.stack([xx, yy, zz], dim=-1).unsqueeze(0).to(device)
-    grid_to_gt_res = grid_to_gt_res.repeat(B, 1, 1, 1, 1)
-    grid_affine = torch.nn.functional.affine_grid(Rt, (B, 1, sdf_size, sdf_size, sdf_size)).to(device)
-    grid_scale = torch.nn.functional.affine_grid(S, (B, 1, sdf_size, sdf_size, sdf_size)).to(device)
-    return grid_to_gt_res, grid_affine, grid_scale
-
-def trans_sdf_to_vox(sdf, vox_thres=0.033, grid_to_gt_res=None, grid_affine=None, grid_scale=None, align_corners=True, pad_mode='border'):
-    mode = 'bilinear'
-    sdf_s = sdf.clone()
-    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_affine, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
-    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_scale, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
-    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_to_gt_res, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
-
-    voxel_sdf_mask = sdf_s.clone()
-    voxel_sdf_mask[sdf_s > vox_thres] = 0.
-    voxel_sdf_mask[sdf_s <= vox_thres] = 1.
-    return voxel_sdf_mask
-
-def trans_bin_sdf_to_vox(sdf, vox_thres=0.033, grid_to_gt_res=None, grid_affine=None, grid_scale=None, align_corners=True, pad_mode='border'):
-    mode = 'bilinear'
-    sdf_s = sdf.clone()
-    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_affine, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
-    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_scale, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
-    sdf_s = torch.nn.functional.grid_sample(sdf_s, grid_to_gt_res, mode=mode, align_corners=align_corners, padding_mode=pad_mode)
-
-    voxel_sdf_mask = sdf_s.clone()
-    # thres = 0.031
-    # thres = 0.02
-    voxel_sdf_mask[sdf_s < vox_thres] = 0.
-    voxel_sdf_mask[sdf_s >= vox_thres] = 1.
-    return voxel_sdf_mask
 
 def read_sdf(sdf_h5_file):
     h5_f = h5py.File(sdf_h5_file, 'r')

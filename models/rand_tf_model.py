@@ -344,26 +344,6 @@ class RandTransformerModel(BaseModel):
 
         return self.x_recon_tf
 
-
-    def get_transform_grids(self, B):
-        Rt = repeat(self.Rt, 'b m n -> (repeat b) m n', repeat=B)
-        S = repeat(self.S, 'b m n -> (repeat b) m n', repeat=B)
-
-        device = self.opt.device
-        gt_size = 32
-        vmin, vmax = -1., 1.
-        vrange = vmax - vmin
-        x = torch.linspace(vmin, vmax, gt_size)
-        y = torch.linspace(vmin, vmax, gt_size)
-        z = torch.linspace(vmin, vmax, gt_size)
-        xx, yy, zz = torch.meshgrid(x, y, z)
-
-        grid_to_gt_res = torch.stack([xx, yy, zz], dim=-1).unsqueeze(0).to(device)
-        grid_to_gt_res = grid_to_gt_res.repeat(B, 1, 1, 1, 1)
-        grid_affine = torch.nn.functional.affine_grid(Rt, (B, 1, 64, 64, 64)).to(device)
-        grid_scale = torch.nn.functional.affine_grid(S, (B, 1, 64, 64, 64)).to(device)
-        return grid_to_gt_res, grid_affine, grid_scale
-
     def eval_metrics(self, dataloader, thres=0.0):
         self.eval()
         
